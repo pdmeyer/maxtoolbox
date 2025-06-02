@@ -1,5 +1,10 @@
 # Max ToolBox - CHANGELOG
 
+## Version 16.1
+June 1st, 2025
+
+* Left align objects (shortkey `u`)
+
 ## Version 16
 Jan 18th, 2022
 
