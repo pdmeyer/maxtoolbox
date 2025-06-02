@@ -213,6 +213,7 @@ function findmin(maxarray)
 }
 
 function checkSelected(selected){
+	post("checkSelected", selected.length);
 	if (selected.length < 1){
 		// silently return if nothing is selected
 		return false;
@@ -330,6 +331,37 @@ function alignvert(mouseY)
 			objarray[i].obj.message("presentation_rect", newpos);
 		}
 	}
+	clean_up();
+}
+
+function left_align() {
+	post("left_align");
+	if (max.frontpatcher.locked){
+		return;
+	}
+
+	// collect selected objects
+	max.frontpatcher.apply(applycollect);
+
+	// are enough objects selected?
+	if (!checkSelected(objarray)){
+		return;
+	}
+	
+	// sort on x and y axis
+	objarray.sort(alignsortx);
+	objarray.sort(alignsorty);
+
+	var newpos = [];
+
+	for (var i=1; i<objarray.length; i++){
+		newpos[X1] = objarray[0].obj.rect[X1];
+		newpos[X2] = objarray[i].obj.rect[X2] - objarray[i].obj.rect[X1] + newpos[X1];
+		newpos[Y1] = objarray[i].obj.rect[Y1];
+		newpos[Y2] = objarray[i].obj.rect[Y1];
+		objarray[i].obj.rect = newpos;
+	}
+
 	clean_up();
 }
 
