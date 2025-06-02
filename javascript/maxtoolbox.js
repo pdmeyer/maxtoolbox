@@ -212,8 +212,7 @@ function findmin(maxarray)
 	return minimum;
 }
 
-function checkSelected(selected){
-	post("checkSelected", selected.length);
+function checkSelected(selected){	
 	if (selected.length < 1){
 		// silently return if nothing is selected
 		return false;
@@ -282,6 +281,7 @@ function alignhorz(mouseX)
 
 function alignvert(mouseY)
 {
+	post("alignvert");
 	if (max.frontpatcher.locked){
 		return;
 	}
@@ -305,37 +305,44 @@ function alignvert(mouseY)
 	if (mouseY === 'no_mouse'){
 		// if no mouse movement then immediately reorder the objects
 		var height = Math.max(0, objarray[objarray.length-1].obj.rect[Y1] - objarray[0].obj.rect[Y1]);
-	} else {
-		// width of total objects is mouseX - (1st object + window posY+ toolbar width)
-		var height = Math.max(0, mouseY - (objarray[0].obj.rect[Y1] + max.frontpatcher.wind.location[Y1] + 36));
-	}
-	// distance between object is height divided by total objects
-	var deltay = height / (objarray.length-1);
 
-	if (patching_mode){
-		// adjust if in patching mode
 		for (var i=1; i<objarray.length; i++){
 			newpos[X1] = objarray[i].obj.rect[X1];
 			newpos[X2] = objarray[i].obj.rect[X2];
-			newpos[Y1] = objarray[0].obj.rect[Y1] + deltay * i;
+			newpos[Y1] = objarray[i-1].obj.rect[Y2] + 10;
 			newpos[Y2] = objarray[i].height + newpos[Y1];
 			objarray[i].obj.rect = newpos;
 		}
 	} else {
-		// adjust if in presentation mode
-		for (var i=1; i<objarray.length; i++){
-			newpos[X1] = objarray[i].obj.rect[X1];
-			newpos[X2] = objarray[i].width;
-			newpos[Y1] = objarray[0].obj.rect[Y1] + deltay * i;
-			newpos[Y2] = objarray[i].height;
-			objarray[i].obj.message("presentation_rect", newpos);
+		// width of total objects is mouseX - (1st object + window posY+ toolbar width)
+		var height = Math.max(0, mouseY - (objarray[0].obj.rect[Y1] + max.frontpatcher.wind.location[Y1] + 36));
+		// distance between object is height divided by total objects
+		var deltay = height / (objarray.length-1);
+
+		if (patching_mode){
+			// adjust if in patching mode
+			for (var i=1; i<objarray.length; i++){
+				newpos[X1] = objarray[i].obj.rect[X1];
+				newpos[X2] = objarray[i].obj.rect[X2];
+				newpos[Y1] = objarray[0].obj.rect[Y1] + deltay * i;
+				newpos[Y2] = objarray[i].height + newpos[Y1];
+				objarray[i].obj.rect = newpos;
+			}
+		} else {
+			// adjust if in presentation mode
+			for (var i=1; i<objarray.length; i++){
+				newpos[X1] = objarray[i].obj.rect[X1];
+				newpos[X2] = objarray[i].width;
+				newpos[Y1] = objarray[0].obj.rect[Y1] + deltay * i;
+				newpos[Y2] = objarray[i].height;
+				objarray[i].obj.message("presentation_rect", newpos);
+			}
 		}
 	}
 	clean_up();
 }
 
 function left_align() {
-	post("left_align");
 	if (max.frontpatcher.locked){
 		return;
 	}
